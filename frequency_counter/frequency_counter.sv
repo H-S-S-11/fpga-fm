@@ -1,10 +1,13 @@
+`default_nettype none
+
 module frequency_counter #(
     parameter OUTPUT_BITS=1,
     parameter INPUT_PERIODS=5,
     parameter NUM_FREQUENCIES=(2**OUTPUT_BITS)
 )(
     input logic clk_200M, input_frequency, reset_n_200M, reset_n_input_freq,
-    input logic [15:0] compare_point_i, last_sample_o,
+    input logic [15:0] compare_point_i, 
+    output logic [15:0] last_sample_o,
     output logic [OUTPUT_BITS-1:0] comparison_o
 );
         
@@ -69,7 +72,7 @@ end
 
 assign restart_sample = (run_large_counter_sync[1] & ~run_large_counter_sync[0]);
 
-assign comparison = ~(last_sample >= compare_point); //High means input is above the middle frequency
+assign comparison_o = ~(last_sample >= compare_point_i); //High means input is above the middle frequency
 assign last_sample_o = last_sample;
 //----------------------------------------------------
 

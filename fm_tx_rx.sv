@@ -6,7 +6,7 @@
 `default_nettype none
 
 module fm_tx_rx(
-    input logic clk_50M_i, reset_n,
+    input logic clk_50M_i, reset_n_i,
 	input logic [1:0] demod_i, 
     output logic locked_o, intermediate_frequency_o, fm_o, clk_rf_o,
     output logic in_phase_95M_o, quad_phase_95M_o, demod_o
@@ -14,36 +14,33 @@ module fm_tx_rx(
 
 logic [9:0] nco_o;
 logic [31:0] nco_freq_input;
-logic p_reset, nco_valid;
+logic async_p_reset, nco_valid, sync_reset_n_50M;
 logic audio_square;
 
 logic clk_95M;
-logic [1:0] pll_locks;
-assign intermediate_frequency_o = clk_95M;
-assign clk_rf_o = clk_95M;
-assign p_reset = ~reset_n;
-assign fm_o = nco_o[9];
-assign locked_o = &pll_locks;
+logic [2:0] pll_locks;
 
-assign demod_o = received_fm;
 
-assign nco_freq_input = audio_square ? 425201762 : 433791697;
+reset_sync #(
+	.INPUT_POLARITY(0),
+	.OUTPUT_POLARITY(0))
+reset_50M (
+	.async_reset_i(reset_n_i),
+	.clk(clk_50M_i),
+	.sync_reset_o(sync_reset_n_50M)
+);
 
 fm_5M fm_gen (
 	.clk       (clk_50M_i),       // clk.clk
-	.reset_n   (reset_n),   // rst.reset_n
+	.reset_n   (sync_reset_n_50M),   // rst.reset_n
 	.clken     (1),     //  in.clken
 	.phi_inc_i (nco_freq_input), //    .phi_inc_i
 	.fsin_o    (nco_o),    // out.fsin_o
 	.out_valid (nco_valid)  //    .out_valid
 );
 
-
-
-
-
 medium_multi_pll	pll_95M (
-	.areset ( p_reset ),
+	.areset ( async_p_reset ),
 	.inclk0 ( clk_50M_i ),
 	.c0 ( clk_95M ),
 	.locked ( pll_locks[0] )
@@ -55,15 +52,27 @@ counternbit #(
     .DIVISIONBITS(16))
 count1(
     .clk(clk_50M_i),
-    .n_reset(reset_n),
+    .n_reset(sync_reset_n_50M),
     .value(audio_square)
 );
+
+//The carrier is sent to two output pins for flexibility
+assign intermediate_frequency_o = clk_95M;
+assign clk_rf_o = clk_95M;
+
+assign async_p_reset = ~reset_n_i;
+assign fm_o = nco_o[9];	//The ~5MHz square wave
+assign locked_o = &pll_locks;
+
+//the actual frequency modulation
+assign nco_freq_input = audio_square ? 425201762 : 433791697;
+
 
 //-----------------------RX--------------------------
 
 
 pll_95M_dual_phase	pll_95M_dual_phase_inst (
-	.areset ( p_reset ),
+	.areset ( async_p_reset ),
 	.inclk0 ( clk_50M_i ),
 	.c0 ( in_phase_95M_o ),
 	.c1 ( quad_phase_95M_o ),
@@ -75,13 +84,24 @@ pll_95M_dual_phase	pll_95M_dual_phase_inst (
 
 logic received_fm;
 
+assign demod_o = received_fm;
+
 io_buffer	lvds_clkin (
 	.datain ( demod_i[0] ),
 	.datain_b ( demod_i[1] ),
 	.dataout ( received_fm )
 );
 
+logic clk_200M, sync_reset_n_200M, sync_reset_n_rx_fm;
 
+pll_200M	pll_200M_inst (
+	.areset ( async_p_reset ),
+	.inclk0 ( clk_50M_i ),
+	.c0 ( clk_200M ),
+	.locked ( pll_locks[2] )
+);
+
+/*
 frequency_counter freq_count1 (
 	.clk_200M(),
 	.input_frequency(),
@@ -90,10 +110,29 @@ frequency_counter freq_count1 (
 	.compare_point_i(),
 	.last_sample_o(),
 	.comparison_o()
-)
+);
+*/
+
+reset_sync #(
+	.INPUT_POLARITY(0),
+	.OUTPUT_POLARITY(0))
+reset_200M (
+	.async_reset_i(reset_n_i),
+	.clk(clk_200M),
+	.sync_reset_o(sync_reset_n_200M)
+);
+
+reset_sync #(
+	.INPUT_POLARITY(0),
+	.OUTPUT_POLARITY(0))
+reset_received_rf (
+	.async_reset_i(reset_n_i),
+	.clk(received_fm),
+	.sync_reset_o(sync_reset_n_rx_fm)
+);
 
 
- //-----------------------RX--------------------------
+ //-----------------------End RX--------------------------
 
 /* Multiband PLL clocks in order
  * multi_pll:
