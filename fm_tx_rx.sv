@@ -8,6 +8,9 @@
 module fm_tx_rx(
     input logic clk_50M_i, reset_n_i,
 	input logic [1:0] demod_i, 
+	input logic [1:0]  freq_select_i,
+	input logic freq_sample_bit_select_i,
+	output logic comparison_o, output logic [5:0] freq_sample_o,
     output logic locked_o, intermediate_frequency_o, fm_o, clk_rf_o,
     output logic in_phase_95M_o, quad_phase_95M_o, demod_o
 );
@@ -64,8 +67,17 @@ assign async_p_reset = ~reset_n_i;
 assign fm_o = nco_o[9];	//The ~5MHz square wave
 assign locked_o = &pll_locks;
 
+
 //the actual frequency modulation
-assign nco_freq_input = audio_square ? 425201762 : 433791697;
+//assign nco_freq_input = audio_square ? 425201762 : 433791697;
+
+always_comb begin
+	if (freq_select_i[1]) begin
+		nco_freq_input = freq_select_i[0] ? 425201762 : 433791697;
+	end else begin
+		nco_freq_input = audio_square ? 425201762 : 433791697;
+	end
+end
 
 
 //-----------------------RX--------------------------
@@ -101,17 +113,19 @@ pll_200M	pll_200M_inst (
 	.locked ( pll_locks[2] )
 );
 
-/*
+logic [15:0] freq_sample;
+
 frequency_counter freq_count1 (
-	.clk_200M(),
-	.input_frequency(),
-	.reset_n_200M(),
-	.reset_n_input_freq(),
-	.compare_point_i(),
-	.last_sample_o(),
-	.comparison_o()
+	.clk_200M(clk_200M),
+	.input_frequency(received_fm),
+	.reset_n_200M(sync_reset_n_200M),
+	.reset_n_input_freq(sync_reset_n_rx_fm),
+	.compare_point_i(200),
+	.last_sample_o(freq_sample), //A debug output
+	.comparison_o(comparison_o)
 );
-*/
+
+assign freq_sample_o = freq_sample_bit_select_i ? freq_sample[5:0] : freq_sample[11:6];
 
 reset_sync #(
 	.INPUT_POLARITY(0),

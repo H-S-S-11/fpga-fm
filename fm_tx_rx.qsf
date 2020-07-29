@@ -48,16 +48,26 @@ set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
 
 set_location_assignment PIN_AV19 -to clk_50M_i
-set_location_assignment PIN_V34 -to reset_n_i
-set_location_assignment PIN_V28 -to locked_o
+set_location_assignment PIN_V34  -to reset_n_i
+set_location_assignment PIN_V28  -to locked_o
 set_location_assignment PIN_AD12 -to intermediate_frequency_o
 set_location_assignment PIN_AD13 -to fm_o
 set_location_assignment PIN_AH19 -to clk_rf_o
-set_location_assignment PIN_AV7 -to in_phase_95M_o
-set_location_assignment PIN_AW7 -to quad_phase_95M_o
-set_location_assignment PIN_AF6 -to demod_i[0]
-set_location_assignment PIN_AE5 -to demod_i[1]
-set_location_assignment PIN_AW5 -to demod_o
+set_location_assignment PIN_AV7  -to in_phase_95M_o
+set_location_assignment PIN_AW7  -to quad_phase_95M_o
+set_location_assignment PIN_AF6  -to demod_i[0]
+set_location_assignment PIN_AE5  -to demod_i[1]
+set_location_assignment PIN_AW5  -to demod_o
+set_location_assignment PIN_J7   -to freq_select_i[0]
+set_location_assignment PIN_K7   -to freq_select_i[1]
+set_location_assignment PIN_AK6  -to freq_sample_bit_select_i
+set_location_assignment PIN_W28  -to comparison_o
+set_location_assignment PIN_R29  -to freq_sample_o[0]
+set_location_assignment PIN_P29  -to freq_sample_o[1]
+set_location_assignment PIN_N29  -to freq_sample_o[2]
+set_location_assignment PIN_M29  -to freq_sample_o[3]
+set_location_assignment PIN_M30  -to freq_sample_o[4]
+set_location_assignment PIN_N30  -to freq_sample_o[5]
 
 set_instance_assignment -name SLEW_RATE 0 -to fm_o
 set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to fm_o
