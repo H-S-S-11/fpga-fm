@@ -54,7 +54,7 @@ assign run_large_counter = (small_counter != 0);
 
 //Fast clock domain -------------------------------------
 
-always_ff @(posedge clk_200M, negedge reset_n_input_freq) begin
+always_ff @(posedge clk_200M, negedge reset_n_200M) begin
     if (~reset_n_200M) begin
         large_counter <= 0;
         last_sample <= 0;
