@@ -125,7 +125,7 @@ frequency_counter freq_count1 (
 	.comparison_o(comparison_o)
 );
 
-assign freq_sample_o = freq_sample_bit_select_i ? freq_sample[5:0] : freq_sample[11:6];
+assign freq_sample_o = freq_sample_bit_select_i ? ~freq_sample[5:0] : ~freq_sample[11:6];
 
 reset_sync #(
 	.INPUT_POLARITY(0),
