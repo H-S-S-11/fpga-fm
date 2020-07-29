@@ -1,8 +1,0 @@
-{C:/Users/Harry/Documents/Quartus projects/fm_tx_rx/frequency_counter/frequency_counter_tb.sv} {1 {vlog -work work -sv -stats=none {C:/Users/Harry/Documents/Quartus projects/fm_tx_rx/frequency_counter/frequency_counter_tb.sv}
-Model Technology ModelSim PE Student Edition vlog 10.4a Compiler 2015.03 Apr  7 2015
--- Compiling module frequency_counter_tb
-
-Top level modules:
-	frequency_counter_tb
-
-} {} {}}
