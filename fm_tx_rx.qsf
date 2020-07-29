@@ -47,7 +47,7 @@ set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
 
-set_location_assignment PIN_AV19 -to clk_i
+set_location_assignment PIN_AV19 -to clk_50M_i
 set_location_assignment PIN_V34 -to reset_n
 set_location_assignment PIN_V28 -to locked_o
 set_location_assignment PIN_AD12 -to intermediate_frequency_o

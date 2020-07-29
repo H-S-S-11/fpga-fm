@@ -6,7 +6,7 @@
 `default_nettype none
 
 module fm_tx_rx(
-    input logic clk_i, reset_n,
+    input logic clk_50M_i, reset_n,
 	input logic [1:0] demod_i, 
     output logic locked_o, intermediate_frequency_o, fm_o, clk_rf_o,
     output logic in_phase_95M_o, quad_phase_95M_o, demod_o
@@ -16,7 +16,7 @@ logic [9:0] nco_o;
 logic [31:0] nco_freq_input;
 logic p_reset, nco_valid;
 logic audio_square;
-logic received_fm;
+
 logic clk_95M;
 logic [1:0] pll_locks;
 assign intermediate_frequency_o = clk_95M;
@@ -30,7 +30,7 @@ assign demod_o = received_fm;
 assign nco_freq_input = audio_square ? 425201762 : 433791697;
 
 fm_5M fm_gen (
-	.clk       (clk_i),       // clk.clk
+	.clk       (clk_50M_i),       // clk.clk
 	.reset_n   (reset_n),   // rst.reset_n
 	.clken     (1),     //  in.clken
 	.phi_inc_i (nco_freq_input), //    .phi_inc_i
@@ -39,44 +39,61 @@ fm_5M fm_gen (
 );
 
 
-io_buffer	lvds_clkin (
-	.datain ( demod_i[0] ),
-	.datain_b ( demod_i[1] ),
-	.dataout ( received_fm )
-	);
 
 
 
 medium_multi_pll	pll_95M (
 	.areset ( p_reset ),
-	.inclk0 ( clk_i ),
+	.inclk0 ( clk_50M_i ),
 	.c0 ( clk_95M ),
 	.locked ( pll_locks[0] )
 );
-
-
-pll_95M_dual_phase	pll_95M_dual_phase_inst (
-	.areset ( p_reset ),
-	.inclk0 ( clk_i ),
-	.c0 ( in_phase_95M_o ),
-	.c1 ( quad_phase_95M_o ),
-	.locked ( pll_locks[1] )
-	);
-
-
-//c0: in phase
-//c1: quadrature (90 degree phase shift)
 
 //16 division bits for about 400Hz with 50MHz clock
 counternbit #(
     .OUTPUTWIDTH(1),
     .DIVISIONBITS(16))
 count1(
-    .clk(clk_i),
+    .clk(clk_50M_i),
     .n_reset(reset_n),
     .value(audio_square)
 );
-    
+
+//-----------------------RX--------------------------
+
+
+pll_95M_dual_phase	pll_95M_dual_phase_inst (
+	.areset ( p_reset ),
+	.inclk0 ( clk_50M_i ),
+	.c0 ( in_phase_95M_o ),
+	.c1 ( quad_phase_95M_o ),
+	.locked ( pll_locks[1] )
+	);
+
+//c0: in phase
+//c1: quadrature (90 degree phase shift)
+
+logic received_fm;
+
+io_buffer	lvds_clkin (
+	.datain ( demod_i[0] ),
+	.datain_b ( demod_i[1] ),
+	.dataout ( received_fm )
+);
+
+
+frequency_counter freq_count1 (
+	.clk_200M(),
+	.input_frequency(),
+	.reset_n_200M(),
+	.reset_n_input_freq(),
+	.compare_point_i(),
+	.last_sample_o(),
+	.comparison_o()
+)
+
+
+ //-----------------------RX--------------------------
 
 /* Multiband PLL clocks in order
  * multi_pll:
