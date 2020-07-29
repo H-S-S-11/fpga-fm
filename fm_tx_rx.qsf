@@ -1,0 +1,100 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 2018  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus Prime
+# Version 18.0.0 Build 614 04/24/2018 SJ Standard Edition
+# Date created = 14:29:21  June 09, 2020
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		fm_tx_rx_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus Prime software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Stratix IV"
+set_global_assignment -name DEVICE EP4SGX530KH40C2
+set_global_assignment -name TOP_LEVEL_ENTITY fm_tx_rx
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.0.0
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "14:29:21  JUNE 09, 2020"
+set_global_assignment -name LAST_QUARTUS_VERSION "18.0.0 Standard Edition"
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
+
+set_location_assignment PIN_AV19 -to clk_i
+set_location_assignment PIN_V34 -to reset_n
+set_location_assignment PIN_V28 -to locked_o
+set_location_assignment PIN_AD12 -to intermediate_frequency_o
+set_location_assignment PIN_AD13 -to fm_o
+set_location_assignment PIN_AH19 -to clk_rf_o
+set_location_assignment PIN_AV7 -to in_phase_95M_o
+set_location_assignment PIN_AW7 -to quad_phase_95M_o
+set_location_assignment PIN_AF6 -to demod_i[0]
+set_location_assignment PIN_AE5 -to demod_i[1]
+set_location_assignment PIN_AW5 -to demod_o
+
+set_instance_assignment -name SLEW_RATE 0 -to fm_o
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to fm_o
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to intermediate_frequency_o
+set_instance_assignment -name SLEW_RATE 0 -to intermediate_frequency_o
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to clk_rf_o
+set_instance_assignment -name SLEW_RATE 0 -to clk_rf_o
+set_location_assignment PIN_N27 -to altera_reserved_tms
+set_location_assignment PIN_G30 -to altera_reserved_tck
+set_location_assignment PIN_J29 -to altera_reserved_tdi
+set_location_assignment PIN_A32 -to altera_reserved_ntrst
+set_location_assignment PIN_F30 -to altera_reserved_tdo
+set_location_assignment PIN_W30 -to ~ALTERA_DATA0~
+set_instance_assignment -name IO_STANDARD "2.5 V" -to clk_rf_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to clk_i
+set_instance_assignment -name IO_STANDARD "2.5 V" -to fm_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to intermediate_frequency_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to locked_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to reset_n
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+
+set_instance_assignment -name IO_STANDARD LVDS -to demod_i[0]
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name SYSTEMVERILOG_FILE frequency_counter/frequency_counter.sv
+set_global_assignment -name SYSTEMVERILOG_FILE "../miscellaneous-systemverilog/counter_sevensegment/counter_nbit.sv"
+set_global_assignment -name VERILOG_FILE fm_5M/synthesis/fm_5M.v -library fm_5M
+set_global_assignment -name QIP_FILE fm_5M/synthesis/fm_5M.qip
+set_global_assignment -name QSYS_FILE fm_5M.qsys
+set_global_assignment -name QIP_FILE PLL_95M_recovery.qip
+set_global_assignment -name QIP_FILE pll_95M_dual_phase.qip
+set_global_assignment -name QIP_FILE pll_85M.qip
+set_global_assignment -name QIP_FILE pll_145M.qip
+set_global_assignment -name QIP_FILE multi_pll.qip
+set_global_assignment -name QIP_FILE medium_multi_pll.qip
+set_global_assignment -name SYSTEMVERILOG_FILE fm_tx_rx.sv
+set_global_assignment -name QIP_FILE io_buffer.qip
