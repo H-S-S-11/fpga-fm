@@ -3,7 +3,44 @@
 *.mpf
 *.wlf
 
-#quartus output files
+*.qpf
+#quartus bd files
 *.qdb
 *.qpg
 *.qtl
+*.hdb
+*.cdb
+*.kpt
+*.tdf
+*.ammdb
+*.bpm
+*.ddb
+*.flock
+*.db_info
+*.hier_info
+*.hif
+*.hsd
+*.logdb
+*.nvd
+*.qmsg
+*.rdb
+*.tdf
+*.tmw_info
+*.idb
+*.rcfdb
+*.sig
+#quartus output files
+*.cdf
+*.done
+*.jdi
+*.pin
+*.rpt
+*.sld
+*.smsg
+*.sof
+*.summary
+#quartus ip related files
+*.ppf
+*.qip
+*.qsys
+*.qws
