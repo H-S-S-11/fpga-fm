@@ -1,9 +1,9 @@
 #modelsim files
-.mti
-.mpf
-.wlf
+*.mti
+*.mpf
+*.wlf
 
 #quartus output files
-.qdb
-.qpg
-.qtl
+*.qdb
+*.qpg
+*.qtl
